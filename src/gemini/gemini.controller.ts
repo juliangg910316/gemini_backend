@@ -1,10 +1,11 @@
+import { GenerateContentResponse } from '@google/genai';
 import { Body, Controller, Get, HttpStatus, Param, Post, Res, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import express from 'express';
 import { BasicPromptDto } from './dtos/basic-prompt.dto';
-import { GeminiService } from './gemini.service';
 import { ChatPromptDto } from './dtos/chat-prompt.dto';
-import { GenerateContentResponse } from '@google/genai';
+import { ImageGenerationDto } from './dtos/image-generation.dto';
+import { GeminiService } from './gemini.service';
 
 @Controller('gemini')
 export class GeminiController {
@@ -65,6 +66,13 @@ export class GeminiController {
       role: message.role,
       parts: message.parts?.map(part => part.text).join(''),
     }));
+  }
+
+  @Post('image-generation')
+  @UseInterceptors(FilesInterceptor('files'))
+  async imageGeneration(@Body() imageGenerationDto: ImageGenerationDto, @UploadedFiles() files: Array<Express.Multer.File>): Promise<any> {
+    imageGenerationDto.files = files;
+    return this.geminiService.imageGeneration(imageGenerationDto);
   }
 
 }
