@@ -28,7 +28,7 @@ export const chatPromptStreamUseCase = async (ai: GoogleGenAI, chatPromptDto: Ch
         },
         history,
     });
-    return await chat.sendMessage({
+    return await chat.sendMessageStream({
         message: [prompt, ...uploadedFiles.map((file) => createPartFromUri(
             file.uri ?? '', file.mimeType ?? ''
         ),)],
